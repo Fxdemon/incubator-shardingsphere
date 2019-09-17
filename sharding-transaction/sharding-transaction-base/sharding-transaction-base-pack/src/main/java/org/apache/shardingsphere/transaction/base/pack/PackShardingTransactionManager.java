@@ -1,13 +1,17 @@
 package org.apache.shardingsphere.transaction.base.pack;
 
+import org.apache.servicecomb.pack.omega.context.OmegaContext;
 import org.apache.shardingsphere.spi.database.DatabaseType;
 import org.apache.shardingsphere.transaction.core.ResourceDataSource;
 import org.apache.shardingsphere.transaction.core.TransactionType;
 import org.apache.shardingsphere.transaction.spi.ShardingTransactionManager;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /***
  * @Description
@@ -16,19 +20,27 @@ import java.util.Collection;
  * @Version 1.0
  **/
 public class PackShardingTransactionManager implements ShardingTransactionManager {
+
+    private final Map<String, DataSource> dataSourceMap = new HashMap<>();
+
+    private  OmegaContext omegaContext;
+
     @Override
     public void init(DatabaseType databaseType, Collection<ResourceDataSource> resourceDataSources) {
-
+        initPackRPCClient();
+        for (ResourceDataSource each : resourceDataSources) {
+            dataSourceMap.put(each.getOriginalName(), null );
+        }
     }
 
     @Override
     public TransactionType getTransactionType() {
-        return null;
+        return TransactionType.BASE_PACK;
     }
 
     @Override
     public boolean isInTransaction() {
-        return false;
+        return null != omegaContext.globalTxId();
     }
 
     @Override
@@ -53,6 +65,10 @@ public class PackShardingTransactionManager implements ShardingTransactionManage
 
     @Override
     public void close() throws Exception {
+
+    }
+
+    private void initPackRPCClient() {
 
     }
 }
