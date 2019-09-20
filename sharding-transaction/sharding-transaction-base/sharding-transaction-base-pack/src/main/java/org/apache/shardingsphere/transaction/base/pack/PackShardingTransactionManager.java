@@ -1,10 +1,15 @@
 package org.apache.shardingsphere.transaction.base.pack;
 
 import org.apache.servicecomb.pack.omega.context.OmegaContext;
+import org.apache.servicecomb.pack.omega.context.TransactionContext;
+import org.apache.servicecomb.pack.omega.spring.SpringContextUtils;
+import org.apache.servicecomb.pack.omega.transaction.TransactionContextHelper;
 import org.apache.shardingsphere.spi.database.DatabaseType;
 import org.apache.shardingsphere.transaction.core.ResourceDataSource;
 import org.apache.shardingsphere.transaction.core.TransactionType;
 import org.apache.shardingsphere.transaction.spi.ShardingTransactionManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -23,13 +28,22 @@ public class PackShardingTransactionManager implements ShardingTransactionManage
 
     private final Map<String, DataSource> dataSourceMap = new HashMap<>();
 
-    private  OmegaContext omegaContext;
+    private  OmegaContext omegaContext  =  (OmegaContext) SpringContextUtils.getBean(OmegaContext.class);
+
+    private SagaImpl sagaImpl = new SagaImpl();
+
+    private final TransactionContextHelper transactionContextHelper = new TransactionContextHelper() {
+        @Override
+        protected Logger getLogger() {
+            return LoggerFactory.getLogger(getClass());
+        }
+    };
 
     @Override
     public void init(DatabaseType databaseType, Collection<ResourceDataSource> resourceDataSources) {
-        initPackRPCClient();
+        initPackClient();
         for (ResourceDataSource each : resourceDataSources) {
-            dataSourceMap.put(each.getOriginalName(), null );
+            dataSourceMap.put(each.getOriginalName(), each.getDataSource() );
         }
     }
 
@@ -45,30 +59,45 @@ public class PackShardingTransactionManager implements ShardingTransactionManage
 
     @Override
     public Connection getConnection(String dataSourceName) throws SQLException {
-        return null;
+        return dataSourceMap.get(dataSourceName).getConnection();
     }
 
     @Override
     public void begin() {
-
+        TransactionContext localTxContext = omegaContext.getTransactionContext();
+        PackTransactionHolder.set(localTxContext);
+        sagaImpl.begin( localTxContext, omegaContext);
+        PackTransactionBroadcaster.collectGlobalTxId();
     }
 
     @Override
     public void commit() {
-
+        try {
+            sagaImpl.commit( PackTransactionHolder.get(), omegaContext);
+        } finally {
+            PackTransactionBroadcaster.clear();
+            PackTransactionHolder.clear();
+        }
     }
 
     @Override
     public void rollback() {
-
+        try {
+            //调运冲正
+            sagaImpl.rollback( PackTransactionHolder.get(), omegaContext);
+        } finally {
+            PackTransactionBroadcaster.clear();
+            PackTransactionHolder.clear();
+        }
     }
 
     @Override
     public void close() throws Exception {
-
+        dataSourceMap.clear();
+        PackTransactionHolder.clear();
     }
 
-    private void initPackRPCClient() {
+    private void initPackClient() {
 
     }
 }

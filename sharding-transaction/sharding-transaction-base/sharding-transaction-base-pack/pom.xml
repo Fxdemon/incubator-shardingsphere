@@ -10,11 +10,18 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>sharding-transaction-base-pack</artifactId>
+    <name>${project.artifactId}</name>
 
     <dependencies>
         <dependency>
             <groupId>org.apache.servicecomb.pack</groupId>
+            <artifactId>omega-spring-starter</artifactId>
+            <version>0.6.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.servicecomb.pack</groupId>
             <artifactId>omega-transaction</artifactId>
+            <version>0.6.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
