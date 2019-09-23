@@ -47,7 +47,7 @@ public final class ShardingCTLSetBackendHandlerTest {
         ShardingCTLSetBackendHandler shardingCTLBackendHandler = new ShardingCTLSetBackendHandler("sctl:set  transaction_type=BASE", backendConnection);
         BackendResponse actual = shardingCTLBackendHandler.execute();
         assertThat(actual, instanceOf(UpdateResponse.class));
-        assertThat(backendConnection.getTransactionType(), is(TransactionType.BASE));
+        assertThat(backendConnection.getTransactionType(), is(TransactionType.BASE_SEATA));
     }
     
     @Test

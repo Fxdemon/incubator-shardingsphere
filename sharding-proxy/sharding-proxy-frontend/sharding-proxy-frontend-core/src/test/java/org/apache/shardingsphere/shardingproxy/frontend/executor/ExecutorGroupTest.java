@@ -53,6 +53,6 @@ public final class ExecutorGroupTest {
     public void assertGetExecutorServiceWithBASE() {
         ChannelId channelId = mock(ChannelId.class);
         ChannelThreadExecutorGroup.getInstance().register(channelId);
-        assertThat(CommandExecutorSelector.getExecutor(false, TransactionType.BASE, channelId), instanceOf(ExecutorService.class));
+        assertThat(CommandExecutorSelector.getExecutor(false, TransactionType.BASE_SEATA, channelId), instanceOf(ExecutorService.class));
     }
 }

@@ -4,6 +4,8 @@ import org.apache.servicecomb.pack.omega.context.OmegaContext;
 import org.apache.servicecomb.pack.omega.context.TransactionContext;
 import org.apache.servicecomb.pack.omega.context.annotations.SagaStart;
 import org.apache.servicecomb.pack.omega.transaction.annotations.Compensable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /***
@@ -12,20 +14,31 @@ import org.apache.servicecomb.pack.omega.transaction.annotations.Compensable;
  * @Date 2019-9-20 11:16
  * @Version 1.0
  **/
-public class SagaImpl<T> {
+public class SagaImpl<I,O> {
+
+    private static final Logger logger = LoggerFactory.getLogger(SagaImpl.class);
 
 
-    @SagaStart(autoClose = true)
-    public T begin(TransactionContext localTxContext, OmegaContext omegaContext){
+    @SagaStart
+    public O begin(I input,TransactionContext localTxContext, OmegaContext omegaContext){
+        logger.info("ShardingSphere Pack Saga begin：" + omegaContext.toString());
         return  null;
     }
 
     @Compensable(compensationMethod = "rollback",timeout = 60000,retries = 2)
-    public T commit(TransactionContext localTxContext,OmegaContext omegaContext){
+    public O commit(I input,TransactionContext localTxContext,OmegaContext omegaContext){
+        logger.info("ShardingSphere Pack Saga commit：" + omegaContext.toString());
         return  null;
     }
 
-    public T rollback(TransactionContext localTxContext,OmegaContext omegaContext){
+    public O rollback(I input,TransactionContext localTxContext,OmegaContext omegaContext){
+        logger.info("ShardingSphere Pack Saga rollback：" + omegaContext.toString());
         return  null;
     }
+
+    public O end(I input,TransactionContext localTxContext, OmegaContext omegaContext){
+        logger.info("ShardingSphere Pack Saga end：" + omegaContext.toString());
+        return  null;
+    }
+
 }

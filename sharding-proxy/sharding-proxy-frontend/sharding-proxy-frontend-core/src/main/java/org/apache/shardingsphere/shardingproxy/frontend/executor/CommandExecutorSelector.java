@@ -41,7 +41,7 @@ public final class CommandExecutorSelector {
      * @return executor service
      */
     public static ExecutorService getExecutor(final boolean isOccupyThreadForPerConnection, final TransactionType transactionType, final ChannelId channelId) {
-        return (isOccupyThreadForPerConnection || TransactionType.XA == transactionType || TransactionType.BASE == transactionType)
+        return (isOccupyThreadForPerConnection || TransactionType.XA == transactionType || TransactionType.BASE_PACK == transactionType)
             ? ChannelThreadExecutorGroup.getInstance().get(channelId) : UserExecutorGroup.getInstance().getExecutorService();
     }
 }

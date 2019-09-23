@@ -20,6 +20,7 @@
     <modelVersion>4.0.0</modelVersion>
     <modules>
         <module>sharding-transaction-base-seata-at</module>
+        <module>sharding-transaction-base-pack</module>
     </modules>
     <parent>
         <groupId>org.apache.shardingsphere</groupId>

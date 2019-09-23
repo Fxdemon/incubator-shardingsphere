@@ -16,7 +16,9 @@ public class TransactionalSQLExecutionHook implements SQLExecutionHook {
 
     @Override
     public void start(RouteUnit routeUnit, DataSourceMetaData dataSourceMetaData, boolean isTrunkThread, Map<String, Object> shardingExecuteDataMap) {
-
+        if (!isTrunkThread) {
+            PackTransactionBroadcaster.broadcastIfNecessary(shardingExecuteDataMap);
+        }
     }
 
     @Override

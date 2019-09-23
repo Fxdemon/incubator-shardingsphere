@@ -60,7 +60,7 @@ public final class SeataATShardingTransactionManager implements ShardingTransact
     
     @Override
     public TransactionType getTransactionType() {
-        return TransactionType.BASE;
+        return TransactionType.BASE_SEATA;
     }
     
     @Override

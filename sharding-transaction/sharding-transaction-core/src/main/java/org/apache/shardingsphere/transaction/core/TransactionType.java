@@ -24,5 +24,5 @@ package org.apache.shardingsphere.transaction.core;
  */
 public enum TransactionType {
     
-    LOCAL, XA, BASE
+    LOCAL, XA, BASE_SEATA , BASE_PACK
 }

@@ -43,7 +43,9 @@
                             <goal>install-node-and-npm</goal>
                         </goals>
                         <configuration>
-                            <nodeVersion>${node.version}</nodeVersion>
+                          <!--<nodeDownloadRoot>http://nodejs.org/dist/</nodeDownloadRoot>
+                          <npmDownloadRoot>http://registry.npmjs.org/npm/-/</npmDownloadRoot>-->
+                          <nodeVersion>${node.version}</nodeVersion>
                         </configuration>
                     </execution>
                     <execution>

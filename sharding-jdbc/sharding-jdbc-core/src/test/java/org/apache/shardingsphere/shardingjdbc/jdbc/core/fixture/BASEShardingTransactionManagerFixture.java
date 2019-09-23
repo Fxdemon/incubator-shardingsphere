@@ -23,6 +23,6 @@ public final class BASEShardingTransactionManagerFixture extends AbstractShardin
     
     @Override
     public TransactionType getTransactionType() {
-        return TransactionType.BASE;
+        return TransactionType.BASE_SEATA;
     }
 }

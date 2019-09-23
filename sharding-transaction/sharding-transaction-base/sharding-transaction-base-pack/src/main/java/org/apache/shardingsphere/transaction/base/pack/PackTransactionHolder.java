@@ -27,7 +27,8 @@ import org.apache.servicecomb.pack.omega.context.TransactionContext;
  * @Version 1.0
  **/
 final class PackTransactionHolder {
-    
+
+
     private static final ThreadLocal<TransactionContext> CONTEXT = new ThreadLocal<>();
     
     /**

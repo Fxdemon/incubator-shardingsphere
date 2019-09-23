@@ -28,16 +28,9 @@ public class PackShardingTransactionManager implements ShardingTransactionManage
 
     private final Map<String, DataSource> dataSourceMap = new HashMap<>();
 
-    private  OmegaContext omegaContext  =  (OmegaContext) SpringContextUtils.getBean(OmegaContext.class);
+    private  OmegaContext omegaContext;
 
-    private SagaImpl sagaImpl = new SagaImpl();
-
-    private final TransactionContextHelper transactionContextHelper = new TransactionContextHelper() {
-        @Override
-        protected Logger getLogger() {
-            return LoggerFactory.getLogger(getClass());
-        }
-    };
+    private SagaImpl sagaImpl;
 
     @Override
     public void init(DatabaseType databaseType, Collection<ResourceDataSource> resourceDataSources) {
@@ -66,14 +59,14 @@ public class PackShardingTransactionManager implements ShardingTransactionManage
     public void begin() {
         TransactionContext localTxContext = omegaContext.getTransactionContext();
         PackTransactionHolder.set(localTxContext);
-        sagaImpl.begin( localTxContext, omegaContext);
-        PackTransactionBroadcaster.collectGlobalTxId();
+        sagaImpl.begin( null,localTxContext, omegaContext);
+        PackTransactionBroadcaster.collectGlobalTxId( omegaContext);
     }
 
     @Override
     public void commit() {
         try {
-            sagaImpl.commit( PackTransactionHolder.get(), omegaContext);
+            sagaImpl.commit( null,PackTransactionHolder.get(), omegaContext);
         } finally {
             PackTransactionBroadcaster.clear();
             PackTransactionHolder.clear();
@@ -84,7 +77,7 @@ public class PackShardingTransactionManager implements ShardingTransactionManage
     public void rollback() {
         try {
             //调运冲正
-            sagaImpl.rollback( PackTransactionHolder.get(), omegaContext);
+            sagaImpl.rollback( null,PackTransactionHolder.get(), omegaContext);
         } finally {
             PackTransactionBroadcaster.clear();
             PackTransactionHolder.clear();
@@ -98,6 +91,7 @@ public class PackShardingTransactionManager implements ShardingTransactionManage
     }
 
     private void initPackClient() {
-
+        omegaContext =  (OmegaContext) SpringContextUtils.getBean(OmegaContext.class);
+        sagaImpl = new SagaImpl();
     }
 }

@@ -18,6 +18,7 @@
 package org.apache.shardingsphere.transaction.base.pack;
 
 import org.apache.servicecomb.pack.omega.context.OmegaContext;
+import org.apache.servicecomb.pack.omega.spring.SpringContextUtils;
 import org.apache.shardingsphere.core.execute.ShardingExecuteDataMap;
 
 import java.util.Map;
@@ -30,10 +31,7 @@ import java.util.Map;
  **/
 class PackTransactionBroadcaster {
 
-
-    private static OmegaContext omegaContext;
-
-    static void collectGlobalTxId() {
+    static void collectGlobalTxId(OmegaContext omegaContext) {
         if ( omegaContext.inGlobalTransaction()) {
             ShardingExecuteDataMap.getDataMap().put(OmegaContext.GLOBAL_TX_ID_KEY, omegaContext.globalTxId());
         }
